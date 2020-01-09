@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset=utf-8>
+    <title>three.js app</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="https://threejs.org/build/three.min.js"></script>
+    <script src="js/OrbitControls.js"></script>
+    <script>
+      // création du renderer
+      var renderer = new THREE.WebGLRenderer();
+      document.body.appendChild(renderer.domElement);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      // création de la caméra
+      var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.5, 1000);
+
+      var textureLoader = new THREE.TextureLoader();
+
+      // création de la scène
+      var scene = new THREE.Scene();
+
+      // couleur de fond noire
+      scene.background = new THREE.Color(0, 0, 0);
+      
+      var ambientLight = new THREE.AmbientLight(0xffffff, .1);
+      scene.add(ambientLight);
+
+      // positionnement de la caméra
+      camera.position.z = 70;
+      camera.position.y = 7;
+
+      scene.background = new THREE.CubeTextureLoader().load( [
+		'https://spoonless.github.io/tuto_threejs/maps/milkyway/1.jpg',
+		'https://spoonless.github.io/tuto_threejs/maps/milkyway/2.jpg',
+		'https://spoonless.github.io/tuto_threejs/maps/milkyway/3.jpg',
+		'https://spoonless.github.io/tuto_threejs/maps/milkyway/4.jpg',
+		'https://spoonless.github.io/tuto_threejs/maps/milkyway/5.jpg',
+		'https://spoonless.github.io/tuto_threejs/maps/milkyway/6.jpg'
+    ] );
+    
+    var geometry = new THREE.Geometry();
+
+geometry.vertices.push(
+	new THREE.Vector3( -10,  10, 0 ),
+	new THREE.Vector3( -10, -10, 0 ),
+	new THREE.Vector3(  10, -10, 0 )
+);
+
+geometry.faces.push( new THREE.Face3( 0, 1, 2 ) );
+
+geometry.computeBoundingSphere();
+scene.add(geometry);
+camera.lookAt(geometry);
+      renderer.shadowMap.enabled = true;
+      
+      // Création du contrôleur
+      var controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.minDistance = 10;
+      controls.maxDistance = 70;
+
+      function animate() {
+        controls.update();
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+      }
+
+      animate();
+
+      function updateViewportSize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix()
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+
+window.addEventListener("resize", updateViewportSize);
+updateViewportSize();
+    </script>
+  </body>
+</html>
